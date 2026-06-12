@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#101827">
+<title>MITx Probability Capstone — 60 Recall Cards</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div class="app">
+  <header class="topbar">
+    <div class="brand"><div class="logo">P</div><div><h1>Probability Capstone Recall</h1><p>MITx 6.431x · 60 one-minute cards</p></div></div>
+    <div><button class="icon-btn" id="themeBtn" aria-label="Toggle theme">◐</button></div>
+  </header>
+
+  <main id="home" class="screen active">
+    <section class="hero">
+      <div class="eyebrow">Adaptive active recall</div>
+      <h2>Cover the probability course in one focused hour.</h2>
+      <p class="lead">Each card gives you a recall prompt first. Reconstruct the concept and formula, reveal the answer, then grade your retrieval. Progress and review dates stay in this browser.</p>
+      <div class="stats">
+        <div class="stat"><strong id="dueStat">60</strong><span>Due today</span></div>
+        <div class="stat"><strong id="seenStat">0</strong><span>Cards seen</span></div>
+        <div class="stat"><strong id="masteredStat">0</strong><span>Mastered</span></div>
+        <div class="stat"><strong id="streakStat">0</strong><span>Day streak</span></div>
+      </div>
+      <div class="mode-grid">
+        <button class="mode" data-mode="adaptive"><b>Adaptive one-hour session</b><span>60 review slots. Due and unseen cards come first; weak cards fill remaining slots.</span></button>
+        <button class="mode" data-mode="sweep"><b>Full 60-card sweep</b><span>Every card exactly once, in unit order. Best for an initial diagnostic or weekly consolidation.</span></button>
+        <button class="mode" data-mode="due"><b>Due cards only</b><span>Review only cards scheduled for today. The session may be shorter than one hour.</span></button>
+      </div>
+      <div class="tools">
+        <button class="secondary" id="browseBtn">Browse all 60 cards</button>
+        <button class="secondary" id="exportBtn">Export progress</button>
+        <button class="secondary" id="importBtn">Import progress</button>
+        <button class="secondary" id="printBtn">Print cards</button>
+        <button class="secondary" id="resetBtn">Reset progress</button>
+        <input type="file" id="importFile" accept=".json" hidden>
+      </div>
+      <div class="note"><b>Recommended routine:</b> use the full sweep on day 1. After that, use the adaptive session daily. Spend roughly 30–40 seconds recalling before revealing, then use the remainder of the minute to correct gaps.</div>
+    </section>
+  </main>
+
+  <main id="study" class="screen">
+    <div class="study-head">
+      <div class="progress-wrap">
+        <div class="progress-label"><span id="sessionLabel">Adaptive session</span><span id="progressText">1 / 60</span></div>
+        <div class="progress"><div id="progressBar"></div></div>
+      </div>
+      <div class="timer" id="timer">1:00</div>
+    </div>
+
+    <article class="card">
+      <div class="card-top">
+        <div><div class="eyebrow" id="unitLabel"></div><h2 class="card-title" id="cardTitle"></h2></div>
+        <div class="card-id" id="cardId"></div>
+      </div>
+      <div class="card-body">
+        <div id="frontView">
+          <div class="prompt-label">Recall prompt</div>
+          <div class="prompt" id="prompt"></div>
+          <div class="recall-hint">Answer aloud or on paper. Try to state the definition, governing equation, assumptions, and one failure mode before revealing.</div>
+        </div>
+        <div class="answer" id="answerView">
+          <ul id="answerPoints"></ul>
+          <div class="formula" id="formula"></div>
+          <div class="callouts">
+            <div class="callout trap"><b>Common trap</b><span id="trap"></span></div>
+            <div class="callout check"><b>Quick check</b><span id="check"></span></div>
+          </div>
+        </div>
+      </div>
+      <div class="card-actions">
+        <div class="reveal-row" id="revealRow">
+          <button class="primary reveal" id="revealBtn">Reveal answer</button>
+          <button class="secondary" id="pauseBtn">Pause</button>
+        </div>
+        <div class="rating-row" id="ratingRow">
+          <button class="rate again" data-rating="again">1 · Again<small id="againNext"></small></button>
+          <button class="rate hard" data-rating="hard">2 · Hard<small id="hardNext"></small></button>
+          <button class="rate good" data-rating="good">3 · Good<small id="goodNext"></small></button>
+          <button class="rate easy" data-rating="easy">4 · Easy<small id="easyNext"></small></button>
+        </div>
+      </div>
+    </article>
+    <div class="session-footer">
+      <span><kbd>Space</kbd> reveal/pause · <kbd>1–4</kbd> grade</span>
+      <button class="secondary" id="endBtn">End session</button>
+    </div>
+  </main>
+
+  <main id="complete" class="screen">
+    <section class="complete">
+      <div class="eyebrow">Session complete</div>
+      <h2>Review recorded</h2>
+      <p id="completeText"></p>
+      <div class="complete-grid">
+        <div class="stat"><strong id="completeCards">0</strong><span>Reviews</span></div>
+        <div class="stat"><strong id="completeGood">0%</strong><span>Good or easy</span></div>
+        <div class="stat"><strong id="completeTime">0m</strong><span>Study time</span></div>
+      </div>
+      <button class="primary" id="homeBtn">Return to dashboard</button>
+    </section>
+  </main>
+</div>
+
+<div class="modal" id="libraryModal">
+  <div class="modal-panel">
+    <div class="modal-head"><h3>Card library</h3><button class="icon-btn" id="closeLibrary">✕</button></div>
+    <div class="modal-body">
+      <div class="filters"><input id="searchInput" placeholder="Search concepts, formulas, or traps"><select id="unitFilter"><option value="">All units</option></select></div>
+      <div id="libraryList"></div>
+    </div>
+  </div>
+</div>
+<div id="printDeck" class="print-deck"></div>
+
+<script src="cards-1.js"></script>
+<script src="cards-2.js"></script>
+<script src="cards-3.js"></script>
+<script src="cards-4.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
