@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#101827">
+<title>MITx Probability Capstone — 60 Recall Cards</title>
+<style>
+:root{
+  --bg:#f3f6fb; --panel:#ffffff; --text:#172033; --muted:#64748b; --line:#dbe3ee;
+  --accent:#2457d6; --accent2:#183b95; --good:#147d52; --warn:#a45b00; --bad:#b42318;
+  --shadow:0 16px 40px rgba(24,39,75,.10); --radius:20px;
+}
+[data-theme="dark"]{
+  --bg:#0b1220; --panel:#121c2e; --text:#edf3ff; --muted:#9eb0c9; --line:#29364c;
+  --accent:#78a4ff; --accent2:#a9c3ff; --good:#65d6a2; --warn:#ffbc66; --bad:#ff817a;
+  --shadow:0 18px 44px rgba(0,0,0,.32);
+}
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%;background:var(--bg);color:var(--text);font-family:Inter,ui-sans-serif,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif}
+button,select,input{font:inherit}
+button{cursor:pointer}
+.app{max-width:1120px;margin:0 auto;padding:18px 18px 48px}
+.topbar{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:18px}
+.brand{display:flex;align-items:center;gap:12px}
+.logo{width:42px;height:42px;border-radius:13px;background:linear-gradient(145deg,var(--accent),var(--accent2));display:grid;place-items:center;color:white;font-weight:800;box-shadow:var(--shadow)}
+.brand h1{font-size:1.05rem;margin:0}.brand p{font-size:.78rem;color:var(--muted);margin:3px 0 0}
+.icon-btn{border:1px solid var(--line);background:var(--panel);color:var(--text);border-radius:12px;padding:10px 12px}
+.screen{display:none}.screen.active{display:block}
+.hero{background:linear-gradient(135deg,var(--panel),color-mix(in srgb,var(--accent) 7%,var(--panel)));border:1px solid var(--line);border-radius:var(--radius);padding:28px;box-shadow:var(--shadow)}
+.hero h2{font-size:clamp(1.6rem,4vw,2.55rem);line-height:1.12;margin:0 0 10px;max-width:760px}
+.hero .lead{color:var(--muted);font-size:1.02rem;max-width:780px;line-height:1.6}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:22px 0}
+.stat{border:1px solid var(--line);background:var(--panel);border-radius:16px;padding:15px}
+.stat strong{display:block;font-size:1.5rem}.stat span{font-size:.78rem;color:var(--muted)}
+.mode-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:18px}
+.mode{border:1px solid var(--line);background:var(--panel);color:var(--text);border-radius:17px;padding:18px;text-align:left;transition:.16s transform,.16s border-color}
+.mode:hover{transform:translateY(-2px);border-color:var(--accent)}
+.mode b{display:block;margin-bottom:7px}.mode span{font-size:.85rem;color:var(--muted);line-height:1.45}
+.tools{display:flex;flex-wrap:wrap;gap:9px;margin-top:18px}
+.primary{border:0;background:var(--accent);color:white;border-radius:12px;padding:11px 15px;font-weight:700}
+.secondary{border:1px solid var(--line);background:var(--panel);color:var(--text);border-radius:12px;padding:10px 14px}
+.note{margin-top:18px;padding:13px 15px;border-left:4px solid var(--accent);background:color-mix(in srgb,var(--accent) 7%,var(--panel));border-radius:10px;color:var(--muted);line-height:1.5;font-size:.88rem}
+.study-head{display:grid;grid-template-columns:1fr auto;gap:16px;align-items:center;margin-bottom:12px}
+.progress-wrap{min-width:0}.progress-label{display:flex;justify-content:space-between;color:var(--muted);font-size:.82rem;margin-bottom:7px}
+.progress{height:9px;background:var(--line);border-radius:999px;overflow:hidden}.progress>div{height:100%;background:var(--accent);width:0;transition:width .25s}
+.timer{width:76px;height:76px;border-radius:50%;display:grid;place-items:center;border:6px solid var(--line);font-size:1.25rem;font-weight:800;background:var(--panel)}
+.timer.low{border-color:var(--warn)}.timer.done{border-color:var(--bad)}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:24px;box-shadow:var(--shadow);min-height:540px;display:flex;flex-direction:column;overflow:hidden}
+.card-top{padding:20px 24px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;gap:12px;align-items:flex-start}
+.eyebrow{font-size:.78rem;color:var(--accent);font-weight:800;text-transform:uppercase;letter-spacing:.06em}.card-title{font-size:1.4rem;margin:5px 0 0}
+.card-id{font-variant-numeric:tabular-nums;color:var(--muted);font-size:.82rem}
+.card-body{padding:30px 28px;flex:1;display:flex;flex-direction:column}
+.prompt-label{font-size:.75rem;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);font-weight:800}
+.prompt{font-size:clamp(1.3rem,3.2vw,2rem);line-height:1.35;margin:11px 0 22px;max-width:900px}
+.recall-hint{color:var(--muted);line-height:1.55;padding:14px 16px;border:1px dashed var(--line);border-radius:13px}
+.answer{display:none;animation:fade .2s ease}.answer.visible{display:block}
+.answer ul{margin:0 0 18px;padding-left:22px}.answer li{margin:0 0 11px;line-height:1.54}
+.formula{padding:14px 16px;background:color-mix(in srgb,var(--accent) 8%,var(--panel));border:1px solid color-mix(in srgb,var(--accent) 28%,var(--line));border-radius:13px;font-family:"SFMono-Regular",Consolas,monospace;line-height:1.55;overflow-wrap:anywhere}
+.callouts{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:14px}
+.callout{border:1px solid var(--line);border-radius:13px;padding:13px 14px;line-height:1.45;font-size:.9rem}
+.callout b{display:block;margin-bottom:4px}.trap b{color:var(--bad)}.check b{color:var(--good)}
+.card-actions{padding:18px 24px;border-top:1px solid var(--line)}
+.reveal-row{display:flex;justify-content:center;gap:10px}.reveal{min-width:210px}
+.rating-row{display:none;grid-template-columns:repeat(4,1fr);gap:9px}.rating-row.visible{display:grid}
+.rate{border:1px solid var(--line);background:var(--panel);color:var(--text);border-radius:12px;padding:11px 7px;font-weight:750}
+.rate small{display:block;font-size:.68rem;color:var(--muted);font-weight:500;margin-top:3px}
+.rate.again{border-color:color-mix(in srgb,var(--bad) 55%,var(--line))}.rate.hard{border-color:color-mix(in srgb,var(--warn) 55%,var(--line))}
+.rate.good{border-color:color-mix(in srgb,var(--good) 55%,var(--line))}.rate.easy{border-color:color-mix(in srgb,var(--accent) 55%,var(--line))}
+.session-footer{display:flex;justify-content:space-between;gap:10px;align-items:center;margin-top:13px;color:var(--muted);font-size:.78rem}
+kbd{border:1px solid var(--line);border-bottom-width:2px;background:var(--panel);border-radius:5px;padding:1px 5px;color:var(--muted)}
+.modal{position:fixed;inset:0;background:rgba(4,10,20,.58);display:none;align-items:center;justify-content:center;padding:18px;z-index:20}
+.modal.open{display:flex}.modal-panel{background:var(--panel);border:1px solid var(--line);border-radius:20px;box-shadow:var(--shadow);width:min(900px,100%);max-height:88vh;display:flex;flex-direction:column}
+.modal-head{padding:18px 20px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;gap:12px;align-items:center}.modal-head h3{margin:0}
+.modal-body{padding:18px 20px;overflow:auto}.filters{display:grid;grid-template-columns:1fr 230px;gap:10px;margin-bottom:14px}
+.filters input,.filters select{width:100%;border:1px solid var(--line);background:var(--panel);color:var(--text);padding:11px;border-radius:11px}
+.library-item{display:grid;grid-template-columns:52px 1fr auto;gap:12px;align-items:center;border-top:1px solid var(--line);padding:13px 2px}
+.library-item:first-of-type{border-top:0}.pill{font-size:.72rem;padding:5px 8px;border-radius:999px;background:color-mix(in srgb,var(--accent) 10%,var(--panel));color:var(--accent);font-weight:800}
+.library-item h4{margin:0 0 4px}.library-item p{margin:0;color:var(--muted);font-size:.8rem;line-height:1.35}
+.due{font-size:.72rem;color:var(--muted);text-align:right}
+.complete{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:34px;box-shadow:var(--shadow);text-align:center}
+.complete h2{font-size:2rem;margin:5px 0 10px}.complete p{color:var(--muted);line-height:1.55}
+.complete-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:24px auto;max-width:650px}
+@keyframes fade{from{opacity:.2;transform:translateY(4px)}to{opacity:1;transform:none}}
+@media(max-width:760px){
+ .app{padding:12px 12px 32px}.hero{padding:21px}.stats{grid-template-columns:repeat(2,1fr)}.mode-grid{grid-template-columns:1fr}
+ .card{min-height:620px}.card-top{padding:17px}.card-body{padding:23px 18px}.card-actions{padding:15px}
+ .callouts{grid-template-columns:1fr}.rating-row{grid-template-columns:repeat(2,1fr)}.filters{grid-template-columns:1fr}
+ .complete-grid{grid-template-columns:1fr}.brand p{display:none}
+}
+@media print{
+ body{background:#fff;color:#111}
+ .app,.modal{display:none!important}
+ .print-deck{display:block!important}
+ .print-card{break-after:page;padding:18mm 16mm;font-family:Arial,sans-serif}
+ .print-card h1{font-size:20pt;margin:0 0 4mm}
+ .print-card h2{font-size:12pt;margin:0 0 7mm;color:#444}
+ .print-card .print-prompt{font-size:15pt;line-height:1.4;margin:0 0 7mm}
+ .print-card li{font-size:11pt;line-height:1.45;margin-bottom:3mm}
+ .print-card .print-formula{font-family:monospace;border:1px solid #aaa;padding:4mm;margin:6mm 0}
+ .print-card p{font-size:10.5pt;line-height:1.4}
+}
+.print-deck{display:none}
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="topbar">
+    <div class="brand"><div class="logo">P</div><div><h1>Probability Capstone Recall</h1><p>MITx 6.431x · 60 one-minute cards</p></div></div>
+    <div><button class="icon-btn" id="themeBtn" aria-label="Toggle theme">◐</button></div>
+  </header>
+
+  <main id="home" class="screen active">
+    <section class="hero">
+      <div class="eyebrow">Adaptive active recall</div>
+      <h2>Cover the probability course in one focused hour.</h2>
+      <p class="lead">Each card gives you a recall prompt first. Reconstruct the concept and formula, reveal the answer, then grade your retrieval. Progress and review dates stay in this browser.</p>
+      <div class="stats">
+        <div class="stat"><strong id="dueStat">60</strong><span>Due today</span></div>
+        <div class="stat"><strong id="seenStat">0</strong><span>Cards seen</span></div>
+        <div class="stat"><strong id="masteredStat">0</strong><span>Mastered</span></div>
+        <div class="stat"><strong id="streakStat">0</strong><span>Day streak</span></div>
+      </div>
+      <div class="mode-grid">
+        <button class="mode" data-mode="adaptive"><b>Adaptive one-hour session</b><span>60 review slots. Due and unseen cards come first; weak cards fill remaining slots.</span></button>
+        <button class="mode" data-mode="sweep"><b>Full 60-card sweep</b><span>Every card exactly once, in unit order. Best for an initial diagnostic or weekly consolidation.</span></button>
+        <button class="mode" data-mode="due"><b>Due cards only</b><span>Review only cards scheduled for today. The session may be shorter than one hour.</span></button>
+      </div>
+      <div class="tools">
+        <button class="secondary" id="browseBtn">Browse all 60 cards</button>
+        <button class="secondary" id="exportBtn">Export progress</button>
+        <button class="secondary" id="importBtn">Import progress</button>
+        <button class="secondary" id="printBtn">Print cards</button>
+        <button class="secondary" id="resetBtn">Reset progress</button>
+        <input type="file" id="importFile" accept=".json" hidden>
+      </div>
+      <div class="note"><b>Recommended routine:</b> use the full sweep on day 1. After that, use the adaptive session daily. Spend roughly 30–40 seconds recalling before revealing, then use the remainder of the minute to correct gaps.</div>
+    </section>
+  </main>
+
+  <main id="study" class="screen">
+    <div class="study-head">
+      <div class="progress-wrap">
+        <div class="progress-label"><span id="sessionLabel">Adaptive session</span><span id="progressText">1 / 60</span></div>
+        <div class="progress"><div id="progressBar"></div></div>
+      </div>
+      <div class="timer" id="timer">1:00</div>
+    </div>
+
+    <article class="card">
+      <div class="card-top">
+        <div><div class="eyebrow" id="unitLabel"></div><h2 class="card-title" id="cardTitle"></h2></div>
+        <div class="card-id" id="cardId"></div>
+      </div>
+      <div class="card-body">
+        <div id="frontView">
+          <div class="prompt-label">Recall prompt</div>
+          <div class="prompt" id="prompt"></div>
+          <div class="recall-hint">Answer aloud or on paper. Try to state the definition, governing equation, assumptions, and one failure mode before revealing.</div>
+        </div>
+        <div class="answer" id="answerView">
+          <ul id="answerPoints"></ul>
+          <div class="formula" id="formula"></div>
+          <div class="callouts">
+            <div class="callout trap"><b>Common trap</b><span id="trap"></span></div>
+            <div class="callout check"><b>Quick check</b><span id="check"></span></div>
+          </div>
+        </div>
+      </div>
+      <div class="card-actions">
+        <div class="reveal-row" id="revealRow">
+          <button class="primary reveal" id="revealBtn">Reveal answer</button>
+          <button class="secondary" id="pauseBtn">Pause</button>
+        </div>
+        <div class="rating-row" id="ratingRow">
+          <button class="rate again" data-rating="again">1 · Again<small id="againNext"></small></button>
+          <button class="rate hard" data-rating="hard">2 · Hard<small id="hardNext"></small></button>
+          <button class="rate good" data-rating="good">3 · Good<small id="goodNext"></small></button>
+          <button class="rate easy" data-rating="easy">4 · Easy<small id="easyNext"></small></button>
+        </div>
+      </div>
+    </article>
+    <div class="session-footer">
+      <span><kbd>Space</kbd> reveal/pause · <kbd>1–4</kbd> grade</span>
+      <button class="secondary" id="endBtn">End session</button>
+    </div>
+  </main>
+
+  <main id="complete" class="screen">
+    <section class="complete">
+      <div class="eyebrow">Session complete</div>
+      <h2>Review recorded</h2>
+      <p id="completeText"></p>
+      <div class="complete-grid">
+        <div class="stat"><strong id="completeCards">0</strong><span>Reviews</span></div>
+        <div class="stat"><strong id="completeGood">0%</strong><span>Good or easy</span></div>
+        <div class="stat"><strong id="completeTime">0m</strong><span>Study time</span></div>
+      </div>
+      <button class="primary" id="homeBtn">Return to dashboard</button>
+    </section>
+  </main>
+</div>
+
+<div class="modal" id="libraryModal">
+  <div class="modal-panel">
+    <div class="modal-head"><h3>Card library</h3><button class="icon-btn" id="closeLibrary">✕</button></div>
+    <div class="modal-body">
+      <div class="filters"><input id="searchInput" placeholder="Search concepts, formulas, or traps"><select id="unitFilter"><option value="">All units</option></select></div>
+      <div id="libraryList"></div>
+    </div>
+  </div>
+</div>
+<div id="printDeck" class="print-deck"></div>
+
+<script>
+const CARDS = [{"id": 1, "unit_no": 1, "unit": "Probability models and axioms", "lecture": "Lecture 1", "title": "Build a probability model", "front": "Given an uncertain experiment, what are the three ingredients of a probability model, and how should you choose them?", "points": ["The sample space Ω lists all mutually exclusive outcomes at the resolution needed for the question. An event A is a subset of Ω. The probability law P assigns probabilities to events.", "A useful model is neither maximally detailed nor vague: outcomes that lead to different answers must be distinguishable, while irrelevant physical detail should be omitted.", "After defining Ω, translate every verbal condition into an event before calculating. Most mistakes begin with an ambiguous sample space or an event that does not match the wording."], "formula": "Model = (Ω, events, P).  An event A occurs exactly when the realized outcome ω belongs to A.", "trap": "Changing the sample space halfway through a solution without changing the probability law.", "check": "For two coin tosses, choose Ω={HH,HT,TH,TT}; the event “exactly one head” is {HT,TH}."}, {"id": 2, "unit_no": 1, "unit": "Probability models and axioms", "lecture": "Lecture 1", "title": "Axioms and their consequences", "front": "State the probability axioms and derive the complement, monotonicity, and two-event addition rules.", "points": ["Nonnegativity: P(A)≥0. Normalization: P(Ω)=1. Countable additivity: for pairwise disjoint A₁,A₂,…, P(∪Aᵢ)=ΣP(Aᵢ).", "From Ω=A∪Aᶜ with disjoint pieces, P(Aᶜ)=1−P(A). If A⊆B, write B=A∪(B\\A), so P(A)≤P(B).", "For arbitrary A and B, add P(A)+P(B) and subtract the overlap counted twice: P(A∪B)=P(A)+P(B)−P(A∩B)."], "formula": "P(Aᶜ)=1−P(A);  P(A∪B)=P(A)+P(B)−P(A∩B).", "trap": "Using P(A∪B)=P(A)+P(B) when A and B are not disjoint.", "check": "If P(A)=0.6, P(B)=0.5, and P(A∩B)=0.3, then P(A∪B)=0.8."}, {"id": 3, "unit_no": 1, "unit": "Probability models and axioms", "lecture": "Lecture 1", "title": "Bounds and continuity of probability", "front": "What probability bounds are useful when exact calculation is difficult, and what does continuity of probability mean?", "points": ["The union bound requires no independence: P(∪ᵢAᵢ)≤ΣᵢP(Aᵢ). It is often loose but converts a complicated failure event into simpler pieces.", "Bonferroni’s lower bound for two events is P(A∩B)≥P(A)+P(B)−1. More generally, probabilities must remain between zero and one and respect set inclusion.", "If Aₙ increases to A, then P(Aₙ)→P(A). If Aₙ decreases to A, then P(Aₙ)→P(A). These facts justify limits of expanding or shrinking event sequences."], "formula": "P(∪ᵢAᵢ)≤ΣᵢP(Aᵢ);  P(A∩B)≥P(A)+P(B)−1.", "trap": "Assuming a small union bound is an exact probability rather than an upper bound.", "check": "If ten component-failure events each have probability 0.001, system failure is at most 0.01."}, {"id": 4, "unit_no": 1, "unit": "Probability models and axioms", "lecture": "Lecture 1", "title": "Uniform finite and geometric models", "front": "When can probability be computed by counting or by area/volume ratios?", "points": ["In a finite uniform model, every elementary outcome has probability 1/|Ω|, so P(A)=|A|/|Ω|. Uniformity must be justified by symmetry or the experiment, not assumed.", "In a continuous uniform model over a region R, probabilities are ratios of length, area, or volume: P(A)=measure(A∩R)/measure(R). Individual points have probability zero.", "Before using a ratio, verify that the underlying distribution is uniform in the chosen coordinates. Uniform angle, uniform radius, and uniform area describe different models."], "formula": "Finite: P(A)=|A|/|Ω|.  Geometric: P(A)=measure(A∩R)/measure(R).", "trap": "Treating equally described outcomes as equally likely; for example, sums of two dice are not uniform.", "check": "A point uniform in a disk is not obtained by choosing the radius uniformly; the radial CDF must be r²/R²."}, {"id": 5, "unit_no": 2, "unit": "Conditioning and independence", "lecture": "Lecture 2", "title": "Conditional probability", "front": "What does conditioning do to a probability model, and how is P(A|B) computed?", "points": ["Conditioning on B means that B is known to have occurred. Outcomes outside B are discarded, and probabilities inside B are renormalized.", "For P(B)>0, P(A|B)=P(A∩B)/P(B). The numerator is the probability that both the target and the evidence occur.", "Always identify the new universe after conditioning. In a finite uniform model, if outcomes within B remain equally likely, P(A|B)=|A∩B|/|B|."], "formula": "P(A|B)=P(A∩B)/P(B), provided P(B)>0.", "trap": "Confusing P(A|B) with P(B|A); the denominators and interpretations differ.", "check": "From a 52-card deck, given that a card is a face card, the probability it is a king is 4/12=1/3."}, {"id": 6, "unit_no": 2, "unit": "Conditioning and independence", "lecture": "Lecture 2", "title": "Multiplication and chain rules", "front": "How do you convert conditional probabilities into joint probabilities for sequential events?", "points": ["Rearranging the conditional-probability definition gives P(A∩B)=P(A)P(B|A)=P(B)P(A|B).", "For a sequence, expand one event at a time: P(A₁∩···∩Aₙ)=P(A₁)P(A₂|A₁)···P(Aₙ|A₁∩···∩Aₙ₋₁).", "Probability trees encode this rule: multiply along a path, then add probabilities of disjoint paths that produce the same final event."], "formula": "P(∩ᵢAᵢ)=P(A₁)∏ᵢ₌₂ⁿ P(Aᵢ | A₁∩···∩Aᵢ₋₁).", "trap": "Multiplying marginal probabilities when the stages are dependent.", "check": "Without replacement, P(two aces)=4/52·3/51, not (4/52)²."}, {"id": 7, "unit_no": 2, "unit": "Conditioning and independence", "lecture": "Lecture 2", "title": "Law of total probability", "front": "How does a partition turn a difficult probability into a weighted sum of simpler conditional probabilities?", "points": ["Let B₁,…,Bₙ be disjoint events whose union is Ω and with positive probabilities. Then every occurrence of A happens through exactly one Bᵢ.", "Therefore P(A)=ΣᵢP(A∩Bᵢ)=ΣᵢP(A|Bᵢ)P(Bᵢ). The P(Bᵢ) values are mixture weights.", "Choose a partition based on a hidden cause, first-stage outcome, or parameter value that makes P(A|Bᵢ) easy."], "formula": "P(A)=Σᵢ P(A|Bᵢ)P(Bᵢ).", "trap": "Using overlapping Bᵢ events, which double-counts outcomes.", "check": "If 30% of items come from line 1 with 2% defects and 70% from line 2 with 5% defects, P(defect)=0.3·0.02+0.7·0.05=0.041."}, {"id": 8, "unit_no": 2, "unit": "Conditioning and independence", "lecture": "Lecture 2", "title": "Bayes’ rule", "front": "How do you reverse a conditional probability, and what are prior, likelihood, evidence, and posterior?", "points": ["Bayes’ rule updates the probability of a cause Bᵢ after observing evidence A. The prior is P(Bᵢ); the likelihood is P(A|Bᵢ).", "The denominator P(A)=ΣⱼP(A|Bⱼ)P(Bⱼ) normalizes all competing hypotheses. The result P(Bᵢ|A) is the posterior.", "Posterior odds equal prior odds times the likelihood ratio. This is often the fastest way to compare two hypotheses."], "formula": "P(Bᵢ|A)=P(A|Bᵢ)P(Bᵢ) / ΣⱼP(A|Bⱼ)P(Bⱼ).", "trap": "Ignoring the base rate P(Bᵢ), especially in medical-test or rare-event problems.", "check": "A highly accurate test can still have a low positive predictive value when the disease is very rare."}, {"id": 9, "unit_no": 2, "unit": "Conditioning and independence", "lecture": "Lecture 3", "title": "Independence versus disjointness", "front": "What does independence mean, and why is it almost the opposite of disjointness?", "points": ["A and B are independent when P(A∩B)=P(A)P(B). If P(B)>0, this is equivalent to P(A|B)=P(A): learning B does not change A’s probability.", "Disjoint events satisfy A∩B=∅. If both have positive probability, they cannot be independent because occurrence of one rules out the other.", "Independence is preserved by complements: if A and B are independent, then Aᶜ and B, A and Bᶜ, and Aᶜ and Bᶜ are independent."], "formula": "A ⟂ B ⇔ P(A∩B)=P(A)P(B).", "trap": "Calling mutually exclusive outcomes independent.", "check": "For one die roll, “even” and “greater than 3” are not disjoint; verify whether 2/6 equals (3/6)(3/6)."}, {"id": 10, "unit_no": 2, "unit": "Conditioning and independence", "lecture": "Lecture 3", "title": "Mutual, pairwise, and conditional independence", "front": "Distinguish pairwise independence, mutual independence, and conditional independence.", "points": ["Pairwise independence checks every pair. Mutual independence requires that every subcollection factorize: P(∩ᵢ∈S Aᵢ)=∏ᵢ∈S P(Aᵢ) for every S.", "Pairwise independence does not imply mutual independence. A standard example uses two independent fair bits X,Y and Z=X⊕Y: each pair is independent, but all three are constrained.", "Conditional independence given C means P(A∩B|C)=P(A|C)P(B|C). Conditioning can create dependence or remove it, so unconditional independence does not settle the conditional question."], "formula": "A ⟂ B | C ⇔ P(A∩B|C)=P(A|C)P(B|C).", "trap": "Checking only pairs when a problem asks whether several events are independent.", "check": "Common-cause variables are often dependent marginally but independent after conditioning on the cause."}, {"id": 11, "unit_no": 3, "unit": "Counting", "lecture": "Lecture 4", "title": "Product rule and permutations", "front": "How do you count ordered constructions, permutations, and selections without replacement?", "points": ["The product rule says that if stage i has nᵢ choices for every preceding partial construction, the total is ∏nᵢ.", "There are n! permutations of n distinct objects. The number of ordered k-tuples selected without replacement is n(n−1)···(n−k+1)=n!/(n−k)!.", "Ask whether order matters and whether repetition is allowed before choosing a formula. With replacement and order, k positions from n choices give nᵏ."], "formula": "nPₖ=n!/(n−k)!;  with replacement and order: nᵏ.", "trap": "Using n! when only k positions are filled, or when objects are not distinct.", "check": "The number of 3-person ordered podiums from 10 people is 10·9·8=720."}, {"id": 12, "unit_no": 3, "unit": "Counting", "lecture": "Lecture 4", "title": "Combinations and subset counting", "front": "When should you use combinations, and how do complementary counts simplify probability?", "points": ["When order does not matter, the number of k-element subsets of n distinct objects is C(n,k)=n!/[k!(n−k)!].", "Each unordered subset corresponds to k! orderings, explaining why nPₖ/k!=C(n,k). Symmetry C(n,k)=C(n,n−k) is often useful.", "For “at least one” or “not all” events, count the complement. Example: number of length-n binary strings containing at least one 1 is 2ⁿ−1."], "formula": "C(n,k)=n!/[k!(n−k)!].", "trap": "Counting the same group multiple times because its internal order is irrelevant.", "check": "A 5-card hand from 52 cards has C(52,5) possibilities, not 52·51·50·49·48."}, {"id": 13, "unit_no": 3, "unit": "Counting", "lecture": "Lecture 4", "title": "Multinomial counting", "front": "How do you count arrangements with repeated categories or allocate n labeled items into category sizes n₁,…,nᵣ?", "points": ["If n labeled positions contain n₁ objects of type 1, …, nᵣ of type r, where Σnᵢ=n, the number of distinct category sequences is n!/(n₁!···nᵣ!).", "This is also the number of ways to partition n labeled objects into labeled groups of prescribed sizes: choose group 1, then group 2, and so on.", "The multinomial theorem expands (x₁+···+xᵣ)ⁿ with coefficients n!/(n₁!···nᵣ!)."], "formula": "Multinomial coefficient = n!/(n₁!n₂!···nᵣ!),  Σnᵢ=n.", "trap": "Forgetting whether the groups themselves are labeled; unlabeled equal-sized groups require additional division.", "check": "The number of sequences with 3 A’s, 2 B’s, and 1 C is 6!/(3!2!1!)=60."}, {"id": 14, "unit_no": 3, "unit": "Counting", "lecture": "Lecture 4", "title": "Counting-based probability workflow", "front": "What disciplined workflow prevents most counting errors in probability problems?", "points": ["First define a uniform sample space. Then count the denominator and favorable outcomes using the same representation and the same notion of order.", "Break complicated counts into disjoint cases, or count a complement. If objects are assigned sequentially, multiply choices; if alternative cases cannot overlap, add them.", "Sanity-check against bounds and small examples. A probability must be in [0,1], and a count cannot exceed the denominator."], "formula": "For a justified uniform model, P(A)=number of favorable outcomes / number of possible outcomes.", "trap": "Counting the numerator as unordered hands while counting the denominator as ordered sequences.", "check": "For exactly two heads in five fair tosses, favorable sequences are C(5,2), denominator 2⁵, giving 10/32."}, {"id": 15, "unit_no": 4, "unit": "Discrete random variables", "lecture": "Lecture 5", "title": "Random variables, PMFs, and CDFs", "front": "What is a discrete random variable, and how do its PMF and CDF encode its distribution?", "points": ["A random variable X is a function from outcomes to numbers. Different outcomes may map to the same value, so probabilities of values are obtained by collecting their preimages.", "The PMF pX(x)=P(X=x) is nonnegative and sums to one. The CDF FX(x)=P(X≤x) is nondecreasing, right-continuous, and approaches 0 and 1 at the extremes.", "For a discrete X, jumps of the CDF equal point masses: pX(x)=FX(x)−FX(x⁻)."], "formula": "pX(x)=P(X=x);  FX(x)=Σ_{t≤x}pX(t).", "trap": "Treating the PMF value pX(x) as a density height that can exceed one; PMF values themselves cannot exceed one.", "check": "If X is a die roll, FX(3.5)=P(X≤3)=1/2."}, {"id": 16, "unit_no": 4, "unit": "Discrete random variables", "lecture": "Lecture 5", "title": "Expectation and LOTUS", "front": "How is expectation computed, and why can you evaluate E[g(X)] without first deriving the PMF of g(X)?", "points": ["The expectation is a probability-weighted average: E[X]=Σx·pX(x), when the sum is absolutely well-defined.", "The law of the unconscious statistician gives E[g(X)]=Σg(x)pX(x). It uses X’s distribution directly and avoids deriving a new distribution.", "Expectation describes long-run average, not the most likely value. It can lie outside the support, as with a fair die whose mean is 3.5."], "formula": "E[g(X)]=Σₓ g(x)pX(x).", "trap": "Replacing E[g(X)] with g(E[X]); they are generally unequal unless g is linear or special conditions hold.", "check": "For a fair die, E[X²]=(1²+···+6²)/6=91/6."}, {"id": 17, "unit_no": 4, "unit": "Discrete random variables", "lecture": "Lecture 5", "title": "Linearity and indicator variables", "front": "Why are indicator variables one of the most powerful tools for expected counts?", "points": ["For event A, the indicator I_A equals 1 when A occurs and 0 otherwise. Its expectation is E[I_A]=P(A).", "If N counts how many properties occur, write N=ΣIᵢ. Then E[N]=ΣP(Aᵢ) by linearity, even when the indicators are dependent.", "Linearity always holds when expectations exist: E[aX+bY+c]=aE[X]+bE[Y]+c. Independence is not required."], "formula": "E[ΣᵢXᵢ]=ΣᵢE[Xᵢ];  E[I_A]=P(A).", "trap": "Unnecessarily computing the full distribution of a count when only its expectation is requested.", "check": "The expected number of fixed points in a random permutation of n items is n·(1/n)=1."}, {"id": 18, "unit_no": 4, "unit": "Discrete random variables", "lecture": "Lecture 6", "title": "Variance and standard deviation", "front": "What does variance measure, and which identities make it easy to compute?", "points": ["Variance measures squared spread around the mean: Var(X)=E[(X−μ)²]. The standard deviation is √Var(X) and has the same units as X.", "The computational identity Var(X)=E[X²]−(E[X])² is often faster. Variance is nonnegative and equals zero exactly when X is constant with probability one.", "Shifts do not change variance; scaling by a multiplies variance by a²: Var(aX+b)=a²Var(X)."], "formula": "Var(X)=E[X²]−(E[X])²;  Var(aX+b)=a²Var(X).", "trap": "Using Var(aX+b)=aVar(X) instead of a²Var(X).", "check": "For Bernoulli(p), E[X]=p and Var(X)=p−p²=p(1−p)."}, {"id": 19, "unit_no": 4, "unit": "Discrete random variables", "lecture": "Lecture 5", "title": "Bernoulli and binomial distributions", "front": "When is a random variable binomial, and what are its PMF, mean, and variance?", "points": ["A Bernoulli(p) variable records one success. A binomial X counts successes in n independent trials with the same success probability p.", "For k successes, choose their locations in C(n,k) ways and multiply the path probability pᵏ(1−p)ⁿ⁻ᵏ.", "Representing X as a sum of n independent Bernoulli variables immediately gives E[X]=np and Var(X)=np(1−p)."], "formula": "P(X=k)=C(n,k)pᵏ(1−p)ⁿ⁻ᵏ;  E[X]=np;  Var(X)=np(1−p).", "trap": "Using a binomial model when trials are dependent, p changes, or sampling is without replacement from a small population.", "check": "Exactly 3 successes in 10 independent trials has probability C(10,3)p³(1−p)⁷."}, {"id": 20, "unit_no": 4, "unit": "Discrete random variables", "lecture": "Lecture 5", "title": "Geometric distribution and memorylessness", "front": "What does a geometric random variable model, and what exactly is the memoryless property?", "points": ["With support {1,2,…}, X is the number of independent Bernoulli(p) trials until the first success. P(X=k)=(1−p)ᵏ⁻¹p.", "Its tail is P(X>k)=(1−p)ᵏ, mean 1/p, and variance (1−p)/p².", "Memorylessness means P(X>s+t | X>s)=P(X>t). After s failures, the remaining waiting time has the original distribution."], "formula": "P(X=k)=(1−p)ᵏ⁻¹p;  P(X>s+t|X>s)=P(X>t).", "trap": "Mixing conventions: some texts count failures before success and use support {0,1,…}.", "check": "If p=0.2, the expected trial of the first success is 5."}, {"id": 21, "unit_no": 4, "unit": "Discrete random variables", "lecture": "Lecture 5", "title": "Poisson distribution", "front": "What is the Poisson distribution, and when is it a useful approximation?", "points": ["A Poisson(λ) variable counts events with rate parameter λ in a fixed region or time interval. Its PMF is e⁻λ λᵏ/k! for k=0,1,….", "Its mean and variance are both λ. Independent Poisson variables add: if X∼Pois(λ) and Y∼Pois(μ), then X+Y∼Pois(λ+μ).", "It approximates Binomial(n,p) when n is large, p is small, and np≈λ, especially for rare-event counts."], "formula": "P(X=k)=e⁻λ λᵏ/k!;  E[X]=Var(X)=λ.", "trap": "Using λ as a rate without multiplying by the interval length; over time t, the mean count is typically λt.", "check": "For λ=2, P(X=0)=e⁻²."}, {"id": 22, "unit_no": 4, "unit": "Discrete random variables", "lecture": "Lecture 6", "title": "Joint PMFs, marginals, and independence", "front": "How do you move between a joint PMF, marginal PMFs, and independence of discrete random variables?", "points": ["The joint PMF pX,Y(x,y)=P(X=x,Y=y) is nonnegative and sums to one over its support.", "Marginalize by summing out the other variable: pX(x)=Σy pX,Y(x,y). Probabilities of regions are sums of joint masses over the corresponding pairs.", "X and Y are independent exactly when pX,Y(x,y)=pX(x)pY(y) for every pair. A factorization must also respect the support."], "formula": "pX(x)=ΣᵧpX,Y(x,y);  X⟂Y ⇔ pX,Y(x,y)=pX(x)pY(y).", "trap": "Seeing an algebraic product inside the support but ignoring a nonrectangular support that prevents independence.", "check": "If p(x,y)=1/4 on {(0,0),(0,1),(1,0),(1,1)}, then X and Y are independent fair bits."}, {"id": 23, "unit_no": 4, "unit": "Discrete random variables", "lecture": "Lecture 7", "title": "Conditional PMFs and iterated expectation", "front": "How are conditional distributions of random variables defined, and how do they recover unconditional quantities?", "points": ["For pY(y)>0, pX|Y(x|y)=pX,Y(x,y)/pY(y). For each fixed y, it is a valid PMF over x.", "The conditional mean E[X|Y=y]=Σx·pX|Y(x|y). As Y varies, E[X|Y] is itself a random variable and a function of Y.", "Averaging conditional means recovers the overall mean: E[X]=Σy E[X|Y=y]pY(y)=E[E[X|Y]]."], "formula": "pX|Y(x|y)=pX,Y(x,y)/pY(y);  E[X]=E[E[X|Y]].", "trap": "Forgetting that conditional quantities depend on the conditioning value y.", "check": "Condition on a first-stage choice when it makes the distribution of X simple, then average over that choice."}, {"id": 24, "unit_no": 5, "unit": "Continuous random variables", "lecture": "Lecture 8", "title": "PDFs, CDFs, and interval probabilities", "front": "How does a probability density differ from a probability, and how are probabilities obtained from a PDF?", "points": ["A PDF fX(x) is nonnegative and integrates to one. Probability is area: P(a≤X≤b)=∫ₐᵇfX(x)dx.", "For a continuous variable, P(X=x)=0 even where fX(x)>0. A density value can exceed one because it has units of probability per unit x.", "The CDF is FX(x)=∫₋∞ˣfX(t)dt. Where differentiable, fX(x)=F′X(x). Endpoint inclusion does not matter for continuous variables."], "formula": "FX(x)=∫₋∞ˣ fX(t)dt;  P(a<X≤b)=FX(b)−FX(a).", "trap": "Interpreting fX(x) as P(X=x).", "check": "A uniform density on [0,0.5] has height 2, which is valid because its total area is one."}, {"id": 25, "unit_no": 5, "unit": "Continuous random variables", "lecture": "Lecture 8", "title": "Continuous expectation and variance", "front": "How are expectation, moments, and variance computed for a continuous random variable?", "points": ["Replace sums by integrals: E[g(X)]=∫g(x)fX(x)dx over the support, assuming absolute integrability where required.", "The mean is a balance point of the density, while the variance measures spread: Var(X)=∫(x−μ)²fX(x)dx.", "The same computational identity holds as in the discrete case: Var(X)=E[X²]−μ². Linearity of expectation also remains valid."], "formula": "E[g(X)]=∫ g(x)fX(x)dx;  Var(X)=E[X²]−(E[X])².", "trap": "Integrating over all real numbers without enforcing the actual support or piecewise density.", "check": "For X uniform on [a,b], E[X]=(a+b)/2 and Var(X)=(b−a)²/12."}, {"id": 26, "unit_no": 5, "unit": "Continuous random variables", "lecture": "Lecture 8", "title": "Uniform and exponential distributions", "front": "What are the key properties of continuous uniform and exponential random variables?", "points": ["If X∼Unif[a,b], fX(x)=1/(b−a) on [a,b]. Its probability is proportional to interval length, mean is (a+b)/2, and variance is (b−a)²/12.", "If T∼Exp(λ), fT(t)=λe⁻λt for t≥0, tail P(T>t)=e⁻λt, mean 1/λ, and variance 1/λ².", "The exponential is memoryless: P(T>s+t|T>s)=P(T>t). It models waiting time to the next event in a Poisson process."], "formula": "Exp(λ): f(t)=λe⁻λt, t≥0;  P(T>t)=e⁻λt.", "trap": "Confusing rate λ with mean; the mean is 1/λ.", "check": "For rate 4 per hour, the mean wait is 1/4 hour=15 minutes."}, {"id": 27, "unit_no": 5, "unit": "Continuous random variables", "lecture": "Lecture 8", "title": "Normal distribution and standardization", "front": "How do you standardize a normal random variable and translate probabilities to the standard normal?", "points": ["If X∼N(μ,σ²), then Z=(X−μ)/σ∼N(0,1). Use the standard-normal CDF Φ(z)=P(Z≤z).", "Thus P(a≤X≤b)=Φ((b−μ)/σ)−Φ((a−μ)/σ). Symmetry gives Φ(−z)=1−Φ(z).", "Linear transformations preserve normality: aX+b is normal with mean aμ+b and variance a²σ²."], "formula": "Z=(X−μ)/σ;  P(X≤x)=Φ((x−μ)/σ).", "trap": "Dividing by σ² instead of σ during standardization.", "check": "For X∼N(10,4), P(X≤12)=Φ(1) because σ=2."}, {"id": 28, "unit_no": 5, "unit": "Continuous random variables", "lecture": "Lecture 9", "title": "Joint PDFs and support geometry", "front": "How do you use a joint density, and why must the support be drawn before integrating?", "points": ["A joint PDF fX,Y(x,y) is nonnegative and integrates to one over its support S. Probabilities are double integrals over subsets of S.", "Marginals are obtained by integrating out the other variable, with limits determined by S: fX(x)=∫fX,Y(x,y)dy.", "Drawing the support reveals whether integration bounds depend on x or y and whether the region must be split into cases."], "formula": "P((X,Y)∈A)=∬_{A∩S} fX,Y(x,y)dxdy;  fX(x)=∫fX,Y(x,y)dy.", "trap": "Using rectangular bounds for a triangular or otherwise constrained support.", "check": "For support 0<y<x<1, the y-range at fixed x is 0<y<x."}, {"id": 29, "unit_no": 5, "unit": "Continuous random variables", "lecture": "Lecture 9", "title": "Conditional densities", "front": "How is a conditional density formed, and how should it be interpreted?", "points": ["For fY(y)>0, fX|Y(x|y)=fX,Y(x,y)/fY(y). For each fixed y, it integrates to one over the allowed x-values.", "Conditioning on Y=y is meaningful even though P(Y=y)=0; the conditional density is defined through a limiting or density ratio construction.", "Conditional expectations follow by integration: E[X|Y=y]=∫x fX|Y(x|y)dx."], "formula": "fX|Y(x|y)=fX,Y(x,y)/fY(y).", "trap": "Keeping the unconditional support of X instead of restricting it to values compatible with Y=y.", "check": "After deriving fX|Y, verify it is nonnegative and integrates to one for every valid y."}, {"id": 30, "unit_no": 5, "unit": "Continuous random variables", "lecture": "Lecture 10", "title": "Independence of continuous random variables", "front": "How can independence be identified from a joint density or CDF?", "points": ["X and Y are independent when FX,Y(x,y)=FX(x)FY(y) for all x,y. If densities exist, this is equivalent to fX,Y(x,y)=fX(x)fY(y) almost everywhere.", "Independence implies conditional and marginal densities agree: fX|Y(x|y)=fX(x) whenever defined.", "A factorized formula is not enough if the support is not a Cartesian product. Independence requires the full joint law, including its zero regions, to factor."], "formula": "X⟂Y ⇔ fX,Y(x,y)=fX(x)fY(y) almost everywhere.", "trap": "Ignoring support constraints such as x+y≤1.", "check": "A constant joint density on a rectangle factors into uniform marginals; on a triangle it generally does not."}, {"id": 31, "unit_no": 5, "unit": "Continuous random variables", "lecture": "Lecture 10", "title": "Discrete hypothesis with continuous evidence", "front": "How does Bayes’ rule work when the unknown hypothesis is discrete but the observation is continuous?", "points": ["Let H take discrete values hᵢ and observation Y have conditional density fY|H(y|hᵢ). After observing Y=y, posterior weights are proportional to likelihood density times prior probability.", "The normalizing denominator is the mixture density fY(y)=Σⱼ fY|H(y|hⱼ)P(H=hⱼ).", "Although a density is not a point probability, likelihood ratios of densities at the observed value correctly update the discrete hypotheses."], "formula": "P(H=hᵢ|Y=y)=fY|H(y|hᵢ)P(H=hᵢ) / ΣⱼfY|H(y|hⱼ)P(H=hⱼ).", "trap": "Multiplying by dy in only part of the calculation; the common infinitesimal factor cancels.", "check": "Classification with class priors and class-conditional densities is an application of this formula."}, {"id": 32, "unit_no": 5, "unit": "Continuous random variables", "lecture": "Lecture 9", "title": "Two-dimensional integration strategy", "front": "What is the safest procedure for probabilities and expectations involving two continuous random variables?", "points": ["Sketch the support and shade the target event. Decide whether vertical or horizontal slices produce simpler bounds.", "Write inner limits as functions of the outer variable. Split the integral whenever the event boundary or support changes form.", "For expectations, integrate g(x,y)fX,Y(x,y), not just the density. Reverse the order of integration only after rewriting the region correctly."], "formula": "E[g(X,Y)]=∬_S g(x,y)fX,Y(x,y)dxdy.", "trap": "Using bounds copied from the support while forgetting that the target event may further restrict them.", "check": "For P(X<Y), integrate only the portion of the support above the line y=x."}, {"id": 33, "unit_no": 6, "unit": "Further topics on random variables", "lecture": "Lecture 11", "title": "Transformations by the CDF method", "front": "How do you derive the distribution of Y=g(X), especially when g is not one-to-one?", "points": ["Start with FY(y)=P(g(X)≤y), translate the inequality into a set of x-values, and integrate or sum over that set. Differentiate if a density is needed.", "For a differentiable one-to-one transformation, fY(y)=fX(g⁻¹(y))·|d g⁻¹(y)/dy|.", "If several x-values map to the same y, sum the contribution from every inverse branch: Σ fX(xᵢ)/|g′(xᵢ)|."], "formula": "fY(y)=Σ_{xᵢ:g(xᵢ)=y} fX(xᵢ)/|g′(xᵢ)|.", "trap": "Using a single inverse branch for Y=X², which has both +√y and −√y preimages.", "check": "For Y=aX+b with a≠0, fY(y)=fX((y−b)/a)/|a|."}, {"id": 34, "unit_no": 6, "unit": "Further topics on random variables", "lecture": "Lecture 12", "title": "Discrete convolution", "front": "How do you find the PMF of a sum of independent discrete random variables?", "points": ["For S=X+Y, the event S=s can occur through disjoint pairs (x,s−x). Sum their joint probabilities.", "If X and Y are independent, pS(s)=Σx pX(x)pY(s−x). This operation is convolution.", "Convolution extends to more than two variables and explains why sums of independent Bernoulli variables are binomial and sums of independent Poisson variables are Poisson."], "formula": "pX+Y(s)=Σₓ pX(x)pY(s−x), for independent X,Y.", "trap": "Applying the product of marginals when X and Y are not independent.", "check": "The sum of two fair dice has probabilities proportional to 1,2,3,4,5,6,5,4,3,2,1."}, {"id": 35, "unit_no": 6, "unit": "Further topics on random variables", "lecture": "Lecture 12", "title": "Continuous convolution", "front": "How do you derive the density of the sum of independent continuous random variables?", "points": ["For S=X+Y with independent X,Y, fS(s)=∫fX(x)fY(s−x)dx. Integration limits are where both density factors are nonzero.", "Geometrically, integrate the joint density along the line x+y=s. Piecewise answers commonly arise as this line enters and leaves the support.", "Convolution of independent normal variables is normal, with means adding and variances adding."], "formula": "fX+Y(s)=∫₋∞∞ fX(x)fY(s−x)dx.", "trap": "Using fixed integration limits that include points outside one variable’s support.", "check": "The sum of two independent Unif[0,1] variables has a triangular density on [0,2]."}, {"id": 36, "unit_no": 6, "unit": "Further topics on random variables", "lecture": "Lecture 12", "title": "Covariance and correlation", "front": "What do covariance and correlation measure, and what do they not imply?", "points": ["Cov(X,Y)=E[(X−μX)(Y−μY)]=E[XY]−E[X]E[Y]. Its sign describes linear co-movement.", "Correlation ρ=Cov(X,Y)/(σXσY) is dimensionless and lies in [−1,1] when variances are positive.", "Independence implies zero covariance when moments exist, but zero covariance generally does not imply independence. For jointly normal variables, zero covariance does imply independence."], "formula": "Var(X+Y)=Var(X)+Var(Y)+2Cov(X,Y).", "trap": "Treating uncorrelated as independent for arbitrary distributions.", "check": "If Y=X² and X is symmetric about zero, Cov(X,Y) may be zero despite strong dependence."}, {"id": 37, "unit_no": 6, "unit": "Further topics on random variables", "lecture": "Lecture 13", "title": "Conditional expectation as a random variable", "front": "What is E[X|Y], and how should you reason about it before and after observing Y?", "points": ["For each y, compute m(y)=E[X|Y=y]. Before observing Y, m(Y) is a random variable because its value depends on random Y.", "It is the best mean-square predictor of X among all functions of Y. The prediction error X−E[X|Y] is orthogonal to every suitable function of Y.", "If X and Y are independent, E[X|Y]=E[X]. If X is already a function of Y, then E[X|Y]=X."], "formula": "E[X|Y]=m(Y), where m(y)=E[X|Y=y].", "trap": "Treating E[X|Y] as a fixed number instead of a function of the observed variable.", "check": "E[E[X|Y]]=E[X] is the tower property."}, {"id": 38, "unit_no": 6, "unit": "Further topics on random variables", "lecture": "Lecture 13", "title": "Total expectation and total variance", "front": "How do conditioning identities decompose a mean and a variance?", "points": ["The law of iterated expectation says E[X]=E[E[X|Y]]. It is useful when conditioning creates a simpler model.", "The law of total variance separates average residual uncertainty from variability of conditional means: Var(X)=E[Var(X|Y)]+Var(E[X|Y]).", "The first term is uncertainty remaining after Y is known; the second is uncertainty explained by changing values of Y."], "formula": "Var(X)=E[Var(X|Y)]+Var(E[X|Y]).", "trap": "Adding E[Var(X|Y)] and E[E[X|Y]]²; the second term must be a variance.", "check": "In a mixture model, total variance includes within-component variance plus between-component variance."}, {"id": 39, "unit_no": 6, "unit": "Further topics on random variables", "lecture": "Lecture 13", "title": "Random sums and Wald-type formulas", "front": "If S=X₁+···+X_N has a random number of terms, how are its mean and variance found?", "points": ["Condition on N. If Xᵢ are i.i.d. with mean μ and variance σ² and are independent of N, then E[S|N]=Nμ and Var(S|N)=Nσ².", "Applying total expectation gives E[S]=E[N]μ. Applying total variance gives Var(S)=E[N]σ²+Var(N)μ².", "The assumptions matter: dependence between N and the summands, or a stopping rule that violates the needed conditions, can invalidate the formulas."], "formula": "E[S]=E[N]μ;  Var(S)=E[N]σ²+Var(N)μ².", "trap": "Using Var(S)=E[N]σ² only and forgetting variation in the random count.", "check": "For a compound Poisson sum with N∼Pois(λ), Var(S)=λ(σ²+μ²)=λE[X₁²]."}, {"id": 40, "unit_no": 7, "unit": "Bayesian inference", "lecture": "Lecture 14", "title": "Bayesian model and posterior", "front": "What are the components of a Bayesian inference problem, and how is the posterior constructed?", "points": ["Treat the unknown parameter Θ as a random variable with prior distribution pΘ or fΘ. Specify how data X are generated through a likelihood pX|Θ or fX|Θ.", "After observing x, posterior density or mass is proportional to likelihood times prior: posterior ∝ p(x|θ)p(θ).", "The normalizing evidence is obtained by summing or integrating over θ. It also gives the marginal probability or density of the data."], "formula": "p(θ|x)=p(x|θ)p(θ)/p(x), with p(x)=Σ or ∫ p(x|θ)p(θ)dθ.", "trap": "Calling p(x|θ) a probability distribution over θ; as a likelihood, it need not normalize over θ.", "check": "Write the generative direction Θ→X first, then reverse it with Bayes’ rule."}, {"id": 41, "unit_no": 7, "unit": "Bayesian inference", "lecture": "Lecture 14", "title": "Discrete-parameter Bayesian updating", "front": "How do repeated conditionally independent observations update a finite set of hypotheses?", "points": ["Given Θ=θ, if observations X₁,…,Xₙ are conditionally independent, the likelihood factors: p(x₁,…,xₙ|θ)=∏ᵢp(xᵢ|θ).", "Posterior odds between θ₁ and θ₂ equal prior odds times the product of likelihood ratios for all observations.", "Independent evidence accumulates additively on the log-odds scale, which prevents numerical underflow and clarifies how each datum shifts belief."], "formula": "Posterior odds = prior odds × ∏ᵢ [p(xᵢ|θ₁)/p(xᵢ|θ₂)].", "trap": "Assuming observations are marginally independent; the needed factorization is conditional on Θ.", "check": "Two observations can be dependent marginally because they share the same unknown parameter."}, {"id": 42, "unit_no": 7, "unit": "Bayesian inference", "lecture": "Lecture 14", "title": "Beta–Binomial conjugacy", "front": "How does a Beta prior update after Bernoulli observations, and what is the posterior mean?", "points": ["Let Θ∼Beta(a,b), and given Θ=θ observe n Bernoulli trials with s successes and n−s failures.", "The likelihood contributes θˢ(1−θ)ⁿ⁻ˢ, so the posterior is Beta(a+s,b+n−s). The prior parameters act like pseudo-counts.", "The posterior mean is (a+s)/(a+b+n), a weighted compromise between the prior mean a/(a+b) and sample proportion s/n."], "formula": "Beta(a,b)+s successes,f failures → Beta(a+s,b+f).", "trap": "Using a+s−1 and b+f−1 as posterior parameters; the exponents are parameters minus one.", "check": "With a uniform Beta(1,1) prior and 7 successes in 10 trials, posterior is Beta(8,4)."}, {"id": 43, "unit_no": 7, "unit": "Bayesian inference", "lecture": "Lecture 14", "title": "Posterior predictive distribution", "front": "How do you predict a future observation while accounting for parameter uncertainty?", "points": ["Do not simply plug in one parameter estimate unless asked. Average the future-data model over the posterior: p(xnew|data)=∫p(xnew|θ)p(θ|data)dθ.", "This incorporates both process randomness and uncertainty about θ. As data accumulate, the posterior concentrates and plug-in prediction may become a good approximation.", "In the Beta–Bernoulli model, the predictive probability of the next success equals the posterior mean of Θ."], "formula": "p(xnew|x)=∫ p(xnew|θ)p(θ|x)dθ.", "trap": "Using the prior predictive after data have already been observed.", "check": "Under Beta(a+s,b+f), P(next success|data)=(a+s)/(a+b+s+f)."}, {"id": 44, "unit_no": 7, "unit": "Bayesian inference", "lecture": "Lecture 15", "title": "Linear Gaussian observation model", "front": "For a normal prior and normal measurement noise, what is the posterior mean and variance?", "points": ["Suppose Θ∼N(μ₀,σ₀²) and Y=Θ+W with independent W∼N(0,σW²). The posterior is normal.", "Posterior precision is the sum of prior and measurement precisions: 1/σpost²=1/σ₀²+1/σW².", "The posterior mean is a precision-weighted average of μ₀ and y. A low-variance source receives more weight because it is more precise."], "formula": "σpost²=(1/σ₀²+1/σW²)⁻¹;  μpost=σpost²(μ₀/σ₀²+y/σW²).", "trap": "Weighting in direct proportion to variance rather than inverse variance.", "check": "If measurement noise is tiny, μpost is close to y; if it is huge, μpost remains close to μ₀."}, {"id": 45, "unit_no": 7, "unit": "Bayesian inference", "lecture": "Lecture 16", "title": "MMSE estimation", "front": "Which estimator minimizes mean squared error, and how is the minimum error characterized?", "points": ["Among all estimators g(X), the conditional mean ĝ(X)=E[Θ|X] minimizes E[(Θ−g(X))²].", "Use the decomposition E[(Θ−g(X))²]=E[(Θ−E[Θ|X])²]+E[(E[Θ|X]−g(X))²]. The cross term vanishes.", "The minimum mean squared error is E[Var(Θ|X)]. It measures the expected posterior uncertainty remaining after observing X."], "formula": "gMMSE(X)=E[Θ|X];  MMSE=E[Var(Θ|X)].", "trap": "Choosing the posterior mode for a squared-error objective; the posterior mean is optimal for squared error.", "check": "Under absolute-error loss, the posterior median—not necessarily the mean—is optimal."}, {"id": 46, "unit_no": 7, "unit": "Bayesian inference", "lecture": "Lecture 16", "title": "MAP, ML, and posterior mean", "front": "How do maximum likelihood, MAP, and posterior-mean estimators differ?", "points": ["ML chooses θ maximizing p(x|θ) and ignores the prior. MAP chooses θ maximizing p(θ|x), equivalently likelihood times prior.", "The posterior mean averages θ under the posterior and is MMSE-optimal. MAP is mode-based and can differ sharply for skewed or multimodal posteriors.", "With a flat prior, MAP may coincide with ML. With abundant regular data, prior influence often diminishes, but this is not automatic in every model."], "formula": "θML=argmaxθ p(x|θ);  θMAP=argmaxθ p(x|θ)p(θ);  θMMSE=E[Θ|x].", "trap": "Assuming the three estimators are interchangeable.", "check": "A prior can regularize MAP away from an unstable ML estimate."}, {"id": 47, "unit_no": 7, "unit": "Bayesian inference", "lecture": "Lecture 17", "title": "Linear least mean squares estimation", "front": "What is the best affine estimator of X from Y, and when does it equal the full MMSE estimator?", "points": ["The scalar LMMSE estimator has form aY+b and minimizes mean squared error over affine functions.", "Solving the orthogonality equations gives ĤX=μX+[Cov(X,Y)/Var(Y)](Y−μY), when Var(Y)>0.", "Its error variance is Var(X)−Cov(X,Y)²/Var(Y). If X and Y are jointly normal, the conditional mean is affine, so LMMSE equals MMSE."], "formula": "ĤX_L=μX + Cov(X,Y)/Var(Y)·(Y−μY).", "trap": "Claiming LMMSE is globally optimal for non-Gaussian variables; it is only best within the affine class.", "check": "If Cov(X,Y)=0, the best affine predictor is the constant μX."}, {"id": 48, "unit_no": 8, "unit": "Limit theorems and classical statistics", "lecture": "Lecture 18", "title": "Markov and Chebyshev inequalities", "front": "How do Markov’s and Chebyshev’s inequalities bound tails using limited information?", "points": ["For nonnegative X and a>0, Markov: P(X≥a)≤E[X]/a. It uses only nonnegativity and the mean.", "Apply Markov to (X−μ)² to obtain Chebyshev: P(|X−μ|≥a)≤σ²/a², or P(|X−μ|≥kσ)≤1/k².", "These bounds are distribution-free and can be loose. They are valuable for proofs and worst-case guarantees when the exact distribution is unknown."], "formula": "P(X≥a)≤E[X]/a;  P(|X−μ|≥a)≤σ²/a².", "trap": "Applying Markov directly to a variable that can be negative.", "check": "Chebyshev guarantees at least 75% of mass lies within 2 standard deviations of the mean."}, {"id": 49, "unit_no": 8, "unit": "Limit theorems and classical statistics", "lecture": "Lecture 18", "title": "Convergence in probability and WLLN", "front": "What does convergence in probability mean, and what does the weak law of large numbers assert?", "points": ["Xₙ converges in probability to c when, for every ε>0, P(|Xₙ−c|>ε)→0.", "For i.i.d. variables with finite mean μ and variance σ², the sample mean X̄ₙ has mean μ and variance σ²/n.", "Chebyshev then gives P(|X̄ₙ−μ|≥ε)≤σ²/(nε²)→0. Thus averages stabilize around the population mean, even though individual observations remain random."], "formula": "X̄ₙ → μ in probability;  Var(X̄ₙ)=σ²/n.", "trap": "Interpreting WLLN as saying every sample path eventually stays near μ; that is a stronger almost-sure statement.", "check": "Doubling n halves the variance of the sample mean, not its standard deviation."}, {"id": 50, "unit_no": 8, "unit": "Limit theorems and classical statistics", "lecture": "Lecture 19", "title": "Central Limit Theorem", "front": "State the CLT and explain what it approximates.", "points": ["For i.i.d. Xᵢ with mean μ and finite positive variance σ², Zₙ=(ΣXᵢ−nμ)/(σ√n) converges in distribution to N(0,1).", "Equivalently, X̄ₙ is approximately N(μ,σ²/n) for large n. The CLT approximates the distribution of a standardized sum, not the distribution of each Xᵢ.", "Accuracy depends on n and the underlying skewness or tail behavior. Heavy-tailed variables may require very large n or violate the finite-variance assumption."], "formula": "(ΣXᵢ−nμ)/(σ√n) ⇒ N(0,1).", "trap": "Standardizing by nσ instead of σ√n.", "check": "For a binomial count, use μ=np and σ=√[np(1−p)]."}, {"id": 51, "unit_no": 8, "unit": "Limit theorems and classical statistics", "lecture": "Lecture 19", "title": "Normal approximations and continuity correction", "front": "How do you apply the CLT to a discrete sum such as a binomial count?", "points": ["For S∼Bin(n,p) with np and n(1−p) reasonably large, approximate S by N(np,np(1−p)).", "Use continuity correction because a discrete mass at k corresponds approximately to the continuous interval [k−0.5,k+0.5].", "For example, P(S≤k)≈Φ((k+0.5−np)/√[np(1−p)]). Standardize only after applying the 0.5 boundary adjustment."], "formula": "P(S≤k)≈Φ((k+0.5−np)/√[np(1−p)]).", "trap": "Using k rather than k+0.5 for a cumulative discrete probability.", "check": "For P(a≤S≤b), use continuous boundaries a−0.5 and b+0.5."}, {"id": 52, "unit_no": 8, "unit": "Limit theorems and classical statistics", "lecture": "Lecture 20", "title": "Estimators, bias, variance, and MSE", "front": "How are the quality and sampling behavior of an estimator evaluated?", "points": ["An estimator ĥθ=T(X₁,…,Xₙ) is a random variable before data are observed. Its distribution over repeated samples is the sampling distribution.", "Bias is E[ĥθ]−θ. Mean squared error decomposes as MSE=Var(ĥθ)+Bias².", "An unbiased estimator is not automatically best; a slightly biased estimator can have much smaller variance and MSE. Consistency means ĥθ approaches θ as n grows."], "formula": "MSE(ĥθ)=E[(ĥθ−θ)²]=Var(ĥθ)+Bias(ĥθ)².", "trap": "Confusing the unknown fixed parameter θ with the random estimator ĥθ.", "check": "The sample mean is unbiased for μ and has variance σ²/n under i.i.d. sampling."}, {"id": 53, "unit_no": 8, "unit": "Limit theorems and classical statistics", "lecture": "Lecture 20", "title": "Confidence intervals and hypothesis tests", "front": "What are the correct repeated-sampling interpretations of a confidence interval and a p-value?", "points": ["A 95% confidence procedure produces intervals that contain the fixed parameter in 95% of repeated samples under the model. After observing one interval, the frequentist parameter is not random.", "A p-value is the probability, assuming the null hypothesis, of a test statistic at least as incompatible with the null as the observed statistic.", "Type I error rejects a true null; its designed probability is the significance level α. Type II error fails to reject a false null; power is one minus Type II error."], "formula": "Typical large-sample CI: estimate ± critical value × standard error.", "trap": "Interpreting a p-value as P(H₀ is true | data), or a 95% CI as giving a 95% posterior probability without a Bayesian model.", "check": "Failure to reject H₀ is not proof that H₀ is true."}, {"id": 54, "unit_no": 9, "unit": "Bernoulli and Poisson processes", "lecture": "Lecture 21", "title": "Bernoulli process", "front": "What defines a Bernoulli process, and what are the distributions of its counts and increments?", "points": ["A Bernoulli process is a sequence X₁,X₂,… of independent Bernoulli(p) trials. The count Sₙ=Σᵢ₌₁ⁿXᵢ is Binomial(n,p).", "Counts over disjoint blocks are independent because they depend on disjoint sets of independent trials. The distribution of a block count depends only on its length.", "The process has stationary independent increments in discrete time. Many waiting-time and counting results follow from switching between trials and successes."], "formula": "Sₙ∼Bin(n,p);  E[Sₙ]=np;  Var(Sₙ)=np(1−p).", "trap": "Assuming block counts are independent when the underlying trials are not independent.", "check": "Sₙ₊ₘ−Sₙ counts successes in the next m trials and is Binomial(m,p), independent of Sₙ."}, {"id": 55, "unit_no": 9, "unit": "Bernoulli and Poisson processes", "lecture": "Lecture 21", "title": "Arrival times in a Bernoulli process", "front": "What distributions describe the first success and the time of the r-th success?", "points": ["The first-success time T₁ is geometric: P(T₁=k)=(1−p)ᵏ⁻¹p.", "The r-th success time Tᵣ has a negative-binomial form. For Tᵣ=k, trial k must be a success and exactly r−1 successes must occur in the first k−1 trials.", "Interarrival times between successive successes are independent geometric variables because after each success the future trials restart probabilistically."], "formula": "P(Tᵣ=k)=C(k−1,r−1)pʳ(1−p)ᵏ⁻ʳ,  k≥r.", "trap": "Using C(k,r) rather than C(k−1,r−1); the final trial is fixed as a success.", "check": "E[Tᵣ]=r/p because it is the sum of r geometric waiting times."}, {"id": 56, "unit_no": 9, "unit": "Bernoulli and Poisson processes", "lecture": "Lecture 22", "title": "Poisson process fundamentals", "front": "What properties define a Poisson process, and what is the count distribution over an interval?", "points": ["A rate-λ Poisson process N(t) has N(0)=0, independent increments, and stationary increments. Counts in an interval of length t are Poisson(λt).", "For small h, P(one arrival in h)=λh+o(h), P(two or more)=o(h), and P(no arrival)=1−λh+o(h).", "Interarrival times are independent Exp(λ), and the k-th arrival time is a sum of k exponentials, hence Gamma/Erlang."], "formula": "N(t+s)−N(s)∼Pois(λt);  P(N(t)=k)=e⁻λt(λt)ᵏ/k!.", "trap": "Confusing N(t), a count, with T₁, a waiting time.", "check": "E[N(t)]=Var(N(t))=λt, while E[T₁]=1/λ."}, {"id": 57, "unit_no": 9, "unit": "Bernoulli and Poisson processes", "lecture": "Lecture 23", "title": "Splitting, merging, and conditional arrival times", "front": "What happens when Poisson processes are merged or arrivals are independently classified?", "points": ["The superposition of independent Poisson processes with rates λ₁,…,λᵣ is Poisson with rate Σλᵢ.", "If each arrival of a rate-λ process is independently labeled type A with probability p, type-A and type-B processes are independent Poisson processes with rates pλ and (1−p)λ.", "Conditional on N(t)=n, the n unordered arrival times are i.i.d. Uniform(0,t); the ordered arrival times are their order statistics."], "formula": "Merge: λtotal=Σλᵢ.  Thin: λA=pλ, λB=(1−p)λ.", "trap": "Assuming split processes are independent when labels are assigned using a dependent rule.", "check": "Given one arrival by time t, its arrival time is uniform on (0,t)."}, {"id": 58, "unit_no": 10, "unit": "Markov chains", "lecture": "Lecture 24", "title": "Finite-state Markov chains", "front": "What is the Markov property, and how are state distributions propagated?", "points": ["A discrete-time Markov chain satisfies P(Xₙ₊₁=j | Xₙ=i, past)=P(Xₙ₊₁=j | Xₙ=i)=Pᵢⱼ.", "The transition matrix P has nonnegative entries and each row sums to one. If the row vector μₙ is the distribution of Xₙ, then μₙ₊₁=μₙP.", "The n-step transition matrix is Pⁿ: (Pⁿ)ᵢⱼ=P(Xₙ=j|X₀=i). This follows from the Chapman–Kolmogorov equations."], "formula": "μₙ=μ₀Pⁿ;  P^(m+n)=P^mP^n.", "trap": "Multiplying in the wrong direction because row-vector and column-vector conventions differ.", "check": "Check that each row of a proposed transition matrix sums to one."}, {"id": 59, "unit_no": 10, "unit": "Markov chains", "lecture": "Lecture 25", "title": "Steady state and long-run behavior", "front": "What is a stationary distribution, and when do state probabilities converge to it?", "points": ["A stationary distribution π satisfies π=πP, πᵢ≥0, and Σπᵢ=1. If X₀∼π, every Xₙ has distribution π.", "A finite irreducible chain has a unique stationary distribution. Convergence from every initial distribution additionally requires aperiodicity.", "Periodicity can prevent pointwise convergence even when a unique stationary distribution exists. Long-run time averages may still converge under broader conditions."], "formula": "Solve π=πP together with Σᵢπᵢ=1.", "trap": "Solving only π=πP and forgetting normalization, or claiming convergence without checking periodicity.", "check": "A two-state chain that alternates deterministically has stationary distribution (1/2,1/2) but does not converge from a fixed starting state."}, {"id": 60, "unit_no": 10, "unit": "Markov chains", "lecture": "Lecture 26", "title": "Absorption probabilities and expected times", "front": "How are absorption probabilities and expected hitting times computed by first-step analysis?", "points": ["Let hᵢ be the probability of eventually reaching target set A from state i. Set hᵢ=1 on A, hᵢ=0 on competing absorbing failure states, and hᵢ=ΣⱼPᵢⱼhⱼ elsewhere.", "For expected hitting time mᵢ, set mᵢ=0 on A and mᵢ=1+ΣⱼPᵢⱼmⱼ outside A. The +1 counts the first transition.", "These linear equations come from conditioning on the next state. Verify that the desired hitting time is finite before interpreting a finite solution."], "formula": "hᵢ=ΣⱼPᵢⱼhⱼ;  mᵢ=1+ΣⱼPᵢⱼmⱼ, with boundary conditions.", "trap": "Omitting boundary conditions or the +1 in the expected-time equation.", "check": "First-step analysis is the Markov-chain version of the law of total probability and total expectation."}];
+const KEY="mitx-probability-cards-v1";
+const THEME_KEY="mitx-probability-theme";
+const DAY=86400000;
+let db=loadDB();
+let session=[], cursor=0, current=null, revealed=false, seconds=60, timerHandle=null, paused=false, sessionStart=0, grades=[], sessionMode="adaptive";
+
+function todayKey(d=new Date()){ return new Date(d.getFullYear(),d.getMonth(),d.getDate()).getTime(); }
+function fmtDate(ms){ const d=new Date(ms); return d.toLocaleDateString(undefined,{month:"short",day:"numeric"}); }
+function defaultState(){ return {reps:0,interval:0,ease:2.5,due:todayKey(),lapses:0,last:null}; }
+function loadDB(){
+  try{
+    const parsed=JSON.parse(localStorage.getItem(KEY)||"{}");
+    return {cards:parsed.cards||{},history:parsed.history||[],streak:parsed.streak||0,lastStudy:parsed.lastStudy||null};
+  }catch(e){ return {cards:{},history:[],streak:0,lastStudy:null}; }
+}
+function saveDB(){ localStorage.setItem(KEY,JSON.stringify(db)); updateStats(); }
+function getState(id){ return {...defaultState(),...(db.cards[id]||{})}; }
+function isDue(id){ return getState(id).due<=todayKey(); }
+function mastery(id){ const s=getState(id); return s.reps>=3 && s.interval>=14; }
+
+function updateStats(){
+  const due=CARDS.filter(c=>isDue(c.id)).length;
+  const seen=CARDS.filter(c=>getState(c.id).last).length;
+  const mastered=CARDS.filter(c=>mastery(c.id)).length;
+  document.getElementById("dueStat").textContent=due;
+  document.getElementById("seenStat").textContent=seen;
+  document.getElementById("masteredStat").textContent=mastered;
+  document.getElementById("streakStat").textContent=db.streak||0;
+}
+function show(id){
+  document.querySelectorAll(".screen").forEach(x=>x.classList.remove("active"));
+  document.getElementById(id).classList.add("active");
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+function priority(c){
+  const s=getState(c.id);
+  const overdue=Math.max(0,(todayKey()-s.due)/DAY);
+  const unseen=s.last?0:10000;
+  return unseen + overdue*100 + s.lapses*30 + Math.max(0,20-s.interval);
+}
+function buildSession(mode){
+  const all=[...CARDS];
+  if(mode==="sweep") return all;
+  if(mode==="due"){
+    const due=all.filter(c=>isDue(c.id)).sort((a,b)=>priority(b)-priority(a));
+    return due.length?due:all.sort((a,b)=>priority(b)-priority(a)).slice(0,10);
+  }
+  const ordered=all.sort((a,b)=>priority(b)-priority(a));
+  const result=[...ordered];
+  // Adaptive mode always provides 60 distinct opening reviews. "Again" cards are reinserted during the session.
+  return result.slice(0,60);
+}
+function startSession(mode){
+  sessionMode=mode; session=buildSession(mode); cursor=0; grades=[]; sessionStart=Date.now();
+  document.getElementById("sessionLabel").textContent=mode==="sweep"?"Full 60-card sweep":mode==="due"?"Due-card session":"Adaptive one-hour session";
+  show("study"); renderCard();
+}
+function renderCard(){
+  if(cursor>=session.length){ finishSession(); return; }
+  current=session[cursor]; revealed=false; paused=false; seconds=60;
+  document.getElementById("unitLabel").textContent=`Unit ${current.unit_no} · ${current.unit} · ${current.lecture}`;
+  document.getElementById("cardTitle").textContent=current.title;
+  document.getElementById("cardId").textContent=`Card ${String(current.id).padStart(2,"0")} / 60`;
+  document.getElementById("prompt").textContent=current.front;
+  document.getElementById("answerPoints").innerHTML=current.points.map(p=>`<li>${escapeHTML(p)}</li>`).join("");
+  document.getElementById("formula").textContent=current.formula;
+  document.getElementById("trap").textContent=current.trap;
+  document.getElementById("check").textContent=current.check;
+  document.getElementById("answerView").classList.remove("visible");
+  document.getElementById("frontView").style.display="block";
+  document.getElementById("revealRow").style.display="flex";
+  document.getElementById("ratingRow").classList.remove("visible");
+  document.getElementById("pauseBtn").textContent="Pause";
+  const total=session.length;
+  document.getElementById("progressText").textContent=`${cursor+1} / ${total}`;
+  document.getElementById("progressBar").style.width=`${(cursor/total)*100}%`;
+  updateIntervals();
+  resetTimer();
+}
+function escapeHTML(s){ return s.replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#039;"}[m])); }
+function resetTimer(){
+  clearInterval(timerHandle); updateTimer();
+  timerHandle=setInterval(()=>{ if(!paused && seconds>0){ seconds--; updateTimer(); } },1000);
+}
+function updateTimer(){
+  const el=document.getElementById("timer");
+  el.textContent=`${Math.floor(seconds/60)}:${String(seconds%60).padStart(2,"0")}`;
+  el.classList.toggle("low",seconds<=15&&seconds>0); el.classList.toggle("done",seconds===0);
+}
+function reveal(){
+  if(revealed) return;
+  revealed=true;
+  document.getElementById("frontView").style.display="none";
+  document.getElementById("answerView").classList.add("visible");
+  document.getElementById("revealRow").style.display="none";
+  document.getElementById("ratingRow").classList.add("visible");
+}
+function previewIntervals(id){
+  const s=getState(id);
+  const calc=(r)=>{
+    let interval=s.interval||0,ease=s.ease||2.5,reps=s.reps||0;
+    if(r==="again") interval=1;
+    if(r==="hard") interval=reps===0?2:Math.max(2,Math.round(interval*1.2));
+    if(r==="good") interval=reps===0?1:(reps===1?6:Math.max(2,Math.round(interval*ease)));
+    if(r==="easy") interval=reps===0?4:Math.max(4,Math.round(interval*ease*1.3));
+    return interval;
+  };
+  return {again:calc("again"),hard:calc("hard"),good:calc("good"),easy:calc("easy")};
+}
+function updateIntervals(){
+  const n=previewIntervals(current.id);
+  ["again","hard","good","easy"].forEach(r=>document.getElementById(r+"Next").textContent=`next: ${n[r]} day${n[r]===1?"":"s"}`);
+}
+function grade(rating){
+  if(!revealed) return;
+  const old=getState(current.id);
+  let s={...old}; let interval=0;
+  if(rating==="again"){
+    s.reps=0; s.lapses=(s.lapses||0)+1; s.ease=Math.max(1.3,(s.ease||2.5)-0.2); interval=1;
+    // Reinsert a missed card several positions later for same-session retrieval.
+    const pos=Math.min(session.length,cursor+6);
+    session.splice(pos,0,current);
+    if(sessionMode!=="due" && session.length>60) session.pop();
+  }else if(rating==="hard"){
+    s.reps=(s.reps||0)+1; s.ease=Math.max(1.3,(s.ease||2.5)-0.15);
+    interval=old.reps===0?2:Math.max(2,Math.round((old.interval||1)*1.2));
+  }else if(rating==="good"){
+    s.reps=(s.reps||0)+1;
+    interval=old.reps===0?1:(old.reps===1?6:Math.max(2,Math.round((old.interval||1)*(old.ease||2.5))));
+  }else{
+    s.reps=(s.reps||0)+1; s.ease=Math.min(3.2,(s.ease||2.5)+0.15);
+    interval=old.reps===0?4:Math.max(4,Math.round((old.interval||1)*(old.ease||2.5)*1.3));
+  }
+  s.interval=interval; s.due=todayKey()+interval*DAY; s.last=Date.now(); s.lastRating=rating;
+  db.cards[current.id]=s; grades.push(rating); saveDB();
+  cursor++; renderCard();
+}
+function finishSession(){
+  clearInterval(timerHandle);
+  const elapsed=Math.max(1,Math.round((Date.now()-sessionStart)/60000));
+  const good=grades.filter(g=>g==="good"||g==="easy").length;
+  const pct=grades.length?Math.round(good/grades.length*100):0;
+  updateStreak();
+  db.history.push({date:Date.now(),reviews:grades.length,good:pct,minutes:elapsed});
+  db.history=db.history.slice(-100); saveDB();
+  document.getElementById("completeCards").textContent=grades.length;
+  document.getElementById("completeGood").textContent=pct+"%";
+  document.getElementById("completeTime").textContent=elapsed+"m";
+  document.getElementById("completeText").textContent=`You completed ${grades.length} retrievals. Cards graded Again will return sooner, while strong cards receive longer intervals.`;
+  show("complete");
+}
+function updateStreak(){
+  const t=todayKey(), last=db.lastStudy?todayKey(new Date(db.lastStudy)):null;
+  if(last===t) return;
+  db.streak=(last===t-DAY)?(db.streak||0)+1:1;
+  db.lastStudy=Date.now();
+}
+function endSession(){ if(confirm("End this session and keep reviews already recorded?")) finishSession(); }
+
+function openLibrary(){
+  const select=document.getElementById("unitFilter");
+  if(select.options.length===1){
+    [...new Set(CARDS.map(c=>c.unit_no))].forEach(n=>{
+      const c=CARDS.find(x=>x.unit_no===n), o=document.createElement("option");
+      o.value=n; o.textContent=`Unit ${n}: ${c.unit}`; select.appendChild(o);
+    });
+  }
+  renderLibrary(); document.getElementById("libraryModal").classList.add("open");
+}
+function renderLibrary(){
+  const q=document.getElementById("searchInput").value.toLowerCase().trim();
+  const unit=document.getElementById("unitFilter").value;
+  const filtered=CARDS.filter(c=>{
+    const hay=[c.title,c.front,c.formula,c.trap,c.check,...c.points].join(" ").toLowerCase();
+    return (!q||hay.includes(q)) && (!unit||String(c.unit_no)===unit);
+  });
+  document.getElementById("libraryList").innerHTML=filtered.map(c=>{
+    const s=getState(c.id);
+    return `<div class="library-item"><span class="pill">${String(c.id).padStart(2,"0")}</span><div><h4>${escapeHTML(c.title)}</h4><p>Unit ${c.unit_no} · ${escapeHTML(c.front)}</p></div><div class="due">${s.last?`Due ${fmtDate(s.due)}`:"New"}<br>${s.interval||0}d interval</div></div>`;
+  }).join("") || "<p>No cards match.</p>";
+}
+function exportProgress(){
+  const blob=new Blob([JSON.stringify(db,null,2)],{type:"application/json"});
+  const a=document.createElement("a"); a.href=URL.createObjectURL(blob); a.download="probability-card-progress.json"; a.click(); URL.revokeObjectURL(a.href);
+}
+function importProgress(file){
+  const r=new FileReader();
+  r.onload=()=>{
+    try{
+      const data=JSON.parse(r.result);
+      if(!data.cards) throw new Error("Missing card data");
+      db={cards:data.cards||{},history:data.history||[],streak:data.streak||0,lastStudy:data.lastStudy||null};
+      saveDB(); alert("Progress imported.");
+    }catch(e){ alert("Could not import that file: "+e.message); }
+  }; r.readAsText(file);
+}
+function resetProgress(){
+  if(confirm("Erase all scheduling history and restart all 60 cards?")){
+    localStorage.removeItem(KEY); db=loadDB(); updateStats();
+  }
+}
+function applyTheme(theme){
+  document.documentElement.dataset.theme=theme; localStorage.setItem(THEME_KEY,theme);
+}
+document.querySelectorAll(".mode").forEach(b=>b.addEventListener("click",()=>startSession(b.dataset.mode)));
+document.getElementById("revealBtn").addEventListener("click",reveal);
+document.getElementById("pauseBtn").addEventListener("click",()=>{paused=!paused;document.getElementById("pauseBtn").textContent=paused?"Resume":"Pause";});
+document.querySelectorAll(".rate").forEach(b=>b.addEventListener("click",()=>grade(b.dataset.rating)));
+document.getElementById("endBtn").addEventListener("click",endSession);
+document.getElementById("homeBtn").addEventListener("click",()=>show("home"));
+document.getElementById("browseBtn").addEventListener("click",openLibrary);
+document.getElementById("closeLibrary").addEventListener("click",()=>document.getElementById("libraryModal").classList.remove("open"));
+document.getElementById("libraryModal").addEventListener("click",e=>{if(e.target.id==="libraryModal")e.currentTarget.classList.remove("open");});
+document.getElementById("searchInput").addEventListener("input",renderLibrary);
+document.getElementById("unitFilter").addEventListener("change",renderLibrary);
+document.getElementById("exportBtn").addEventListener("click",exportProgress);
+document.getElementById("importBtn").addEventListener("click",()=>document.getElementById("importFile").click());
+document.getElementById("importFile").addEventListener("change",e=>e.target.files[0]&&importProgress(e.target.files[0]));
+document.getElementById("printBtn").addEventListener("click",()=>{
+  const deck=document.getElementById("printDeck");
+  deck.innerHTML=CARDS.map(c=>`<article class="print-card">
+    <h1>Card ${String(c.id).padStart(2,"0")} — ${escapeHTML(c.title)}</h1>
+    <h2>Unit ${c.unit_no}: ${escapeHTML(c.unit)} · ${escapeHTML(c.lecture)}</h2>
+    <div class="print-prompt"><b>Recall:</b> ${escapeHTML(c.front)}</div>
+    <ul>${c.points.map(p=>`<li>${escapeHTML(p)}</li>`).join("")}</ul>
+    <div class="print-formula">${escapeHTML(c.formula)}</div>
+    <p><b>Common trap:</b> ${escapeHTML(c.trap)}</p>
+    <p><b>Quick check:</b> ${escapeHTML(c.check)}</p>
+  </article>`).join("");
+  window.print();
+});
+document.getElementById("resetBtn").addEventListener("click",resetProgress);
+document.getElementById("themeBtn").addEventListener("click",()=>applyTheme(document.documentElement.dataset.theme==="dark"?"light":"dark"));
+document.addEventListener("keydown",e=>{
+  if(!document.getElementById("study").classList.contains("active")) return;
+  if(e.code==="Space"){e.preventDefault(); if(!revealed)reveal(); else {paused=!paused;document.getElementById("pauseBtn").textContent=paused?"Resume":"Pause";}}
+  if(revealed && ["1","2","3","4"].includes(e.key)) grade(["again","hard","good","easy"][Number(e.key)-1]);
+});
+applyTheme(localStorage.getItem(THEME_KEY)||((matchMedia("(prefers-color-scheme: dark)").matches)?"dark":"light"));
+updateStats();
+</script>
+</body>
+</html>
