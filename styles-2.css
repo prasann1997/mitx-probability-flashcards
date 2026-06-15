@@ -1,0 +1,44 @@
+.recall-hint{color:var(--muted);line-height:1.55;padding:14px 16px;border:1px dashed var(--line);border-radius:13px}
+.answer{display:none;animation:fade .2s ease}.answer.visible{display:block}
+.answer ul{margin:0 0 18px;padding-left:22px}.answer li{margin:0 0 11px;line-height:1.54}
+.formula{padding:14px 16px;background:color-mix(in srgb,var(--accent) 8%,var(--panel));border:1px solid color-mix(in srgb,var(--accent) 28%,var(--line));border-radius:13px;font-family:"SFMono-Regular",Consolas,monospace;line-height:1.55;overflow-wrap:anywhere}
+.callouts{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:14px}
+.callout{border:1px solid var(--line);border-radius:13px;padding:13px 14px;line-height:1.45;font-size:.9rem}
+.callout b{display:block;margin-bottom:4px}.trap b{color:var(--bad)}.check b{color:var(--good)}
+.card-actions{padding:18px 24px;border-top:1px solid var(--line)}
+.reveal-row{display:flex;justify-content:center;gap:10px}.reveal{min-width:210px}
+.rating-row{display:none;grid-template-columns:repeat(4,1fr);gap:9px}.rating-row.visible{display:grid}
+.rate{border:1px solid var(--line);background:var(--panel);color:var(--text);border-radius:12px;padding:11px 7px;font-weight:750}
+.rate small{display:block;font-size:.68rem;color:var(--muted);font-weight:500;margin-top:3px}
+.rate.again{border-color:color-mix(in srgb,var(--bad) 55%,var(--line))}.rate.hard{border-color:color-mix(in srgb,var(--warn) 55%,var(--line))}
+.rate.good{border-color:color-mix(in srgb,var(--good) 55%,var(--line))}.rate.easy{border-color:color-mix(in srgb,var(--accent) 55%,var(--line))}
+.session-footer{display:flex;justify-content:space-between;gap:10px;align-items:center;margin-top:13px;color:var(--muted);font-size:.78rem}
+kbd{border:1px solid var(--line);border-bottom-width:2px;background:var(--panel);border-radius:5px;padding:1px 5px;color:var(--muted)}
+.modal{position:fixed;inset:0;background:rgba(4,10,20,.58);display:none;align-items:center;justify-content:center;padding:18px;z-index:20}
+.modal.open{display:flex}.modal-panel{background:var(--panel);border:1px solid var(--line);border-radius:20px;box-shadow:var(--shadow);width:min(900px,100%);max-height:88vh;display:flex;flex-direction:column}
+.modal-head{padding:18px 20px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;gap:12px;align-items:center}.modal-head h3{margin:0}
+.modal-body{padding:18px 20px;overflow:auto}.filters{display:grid;grid-template-columns:1fr 230px;gap:10px;margin-bottom:14px}
+.filters input,.filters select{width:100%;border:1px solid var(--line);background:var(--panel);color:var(--text);padding:11px;border-radius:11px}
+.library-item{display:grid;grid-template-columns:52px 1fr auto;gap:12px;align-items:center;border-top:1px solid var(--line);padding:13px 2px}
+.library-item:first-of-type{border-top:0}.pill{font-size:.72rem;padding:5px 8px;border-radius:999px;background:color-mix(in srgb,var(--accent) 10%,var(--panel));color:var(--accent);font-weight:800}
+.library-item h4{margin:0 0 4px}.library-item p{margin:0;color:var(--muted);font-size:.8rem;line-height:1.35}
+.due{font-size:.72rem;color:var(--muted);text-align:right}
+.complete{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:34px;box-shadow:var(--shadow);text-align:center}
+.complete h2{font-size:2rem;margin:5px 0 10px}.complete p{color:var(--muted);line-height:1.55}
+.complete-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:24px auto;max-width:650px}
+@keyframes fade{from{opacity:.2;transform:translateY(4px)}to{opacity:1;transform:none}}
+@media(max-width:760px){
+ .app{padding:12px 12px 32px}.hero{padding:21px}.stats{grid-template-columns:repeat(2,1fr)}.mode-grid{grid-template-columns:1fr}
+ .card{min-height:620px}.card-top{padding:17px}.card-body{padding:23px 18px}.card-actions{padding:15px}
+ .callouts{grid-template-columns:1fr}.rating-row{grid-template-columns:repeat(2,1fr)}.filters{grid-template-columns:1fr}
+ .complete-grid{grid-template-columns:1fr}.brand p{display:none}
+}
+@media print{
+ body{background:#fff;color:#111}
+ .app,.modal{display:none!important}
+ .print-deck{display:block!important}
+ .print-card{break-after:page;padding:18mm 16mm;font-family:Arial,sans-serif}
+ .print-card h1{font-size:20pt;margin:0 0 4mm}
+ .print-card h2{font-size:12pt;margin:0 0 7mm;color:#444}
+ .print-card .print-prompt{font-size:15pt;line-height:1.4;margin:0 0 7mm}
+ .print-card li{font-size:11pt;line-height:1.45;margin-bottom:3mm}
