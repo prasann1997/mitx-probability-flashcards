@@ -1,0 +1,4 @@
+ .print-card .print-formula{font-family:monospace;border:1px solid #aaa;padding:4mm;margin:6mm 0}
+ .print-card p{font-size:10.5pt;line-height:1.4}
+}
+.print-deck{display:none}
