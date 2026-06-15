@@ -56,4 +56,4 @@ window.TEST_UI += `            </div>
   </main>
 </div>
 `;
-document.body.innerHTML = window.TEST_UI;
+document.getElementById("testRoot").innerHTML = window.TEST_UI;
